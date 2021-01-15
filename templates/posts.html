@@ -1,0 +1,22 @@
+{% extends 'main.html' %}
+
+{% block body %}
+<div class="d-flex justify-content-center">
+<div class = "container-fluid">
+    <div class="d-flex justify-content-center">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="text-center">Постове</h1>
+        </div>
+        {% for user_post in user_posts %}
+            <div class="card-body">
+                <h5 class="card-title">{{user_post.id}} - {{user_post.title}}</h5>
+                <p class="card-text">От {{user_post.author}} на {{user_post.create_date}}</p>
+                <a href="#" class="btn btn-primary">Виж статията</a>
+            </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+</div>
+{% endblock %}

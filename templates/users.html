@@ -1,0 +1,28 @@
+{% extends 'main.html' %}
+
+{% block body %}
+
+<div class="card-group">
+    {% for us in users %}
+        {% if us.sex == 'f' %}
+            <div class="card text-white bg-danger mb-3">
+                <img src="/static/user.svg" class="card-img-top" width="100" height="100">
+                <div class="card-body">
+                    <h2 class="card-title">{{us.name}}</h5>
+                    <p class="card-text">създаден на {{us.created_profile}}</p>
+                </div>
+            </div>
+        
+        {% else %}
+            <div class="card text-white bg-primary mb-3">
+                <img src="/static/user.svg" class="card-img-top" width="100" height="100">
+                <div class="card-body">
+                    <h2 class="card-title">{{us.name}}</h5>
+                    <p class="card-text">създаден на {{us.created_profile}}</p>
+                </div>
+            </div>
+            {% endif %}
+    {% endfor %}
+  </div>
+
+  {% endblock %}
