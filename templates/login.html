@@ -1,1 +1,24 @@
 {% extends 'main.html' %}
+
+{% block body %}
+<div class="position-static">
+  <div class="position-absolute top-50 start-50 translate-middle">
+    <div class="shadow-lg p-3 mb-5 bg-white rounded">
+<form>
+    <div class="form-outline mb-4">
+      <input type="email" id="form3Example3" class="form-control" />
+      <label class="form-label" for="form3Example3">Имейл</label>
+    </div>
+    
+    <div class="form-outline mb-4">
+        <input type="password" id="form3Example4" class="form-control" />
+        <label class="form-label" for="form3Example4">Парола</label>
+    </div>
+  
+    <button type="submit" class="btn btn-primary btn-block mb-4">Влизане</button>
+</form>
+    </div>
+</div>
+</div>
+
+{% endblock %}
