@@ -1,22 +1,20 @@
 {% extends 'main.html' %}
 
 {% block body %}
-<div class="d-flex justify-content-center">
-<div class = "container-fluid">
-    <div class="d-flex justify-content-center">
-    <div class="card">
-        <div class="card-header">
-            <h1 class="text-center">Постове</h1>
+<div class="position-static" style="padding: 50px;">
+    <div class="mx-auto">
+        <h1 class="display-1 text-center">Постове</h1>
+        <br>
+        <div class="card center" style="margin: 0 auto; float: none; margin-bottom: 10px; border: 2px solid black;">
+            {% for user_post in user_posts %}
+                <div class="card-body" style="margin:20px;">
+                    <h5 class="card-title">{{user_post.id}} - {{user_post.title}}</h5>
+                    <p class="card-text">От {{user_post.author}} на {{user_post.create_date}}</p>
+                    <a href="#" class="btn btn btn-success">Виж статията</a>
+                </div>
+                <hr  style="border: 2px solid #198754;">
+            {% endfor %}
         </div>
-        {% for user_post in user_posts %}
-            <div class="card-body">
-                <h5 class="card-title">{{user_post.id}} - {{user_post.title}}</h5>
-                <p class="card-text">От {{user_post.author}} на {{user_post.create_date}}</p>
-                <a href="#" class="btn btn-primary">Виж статията</a>
-            </div>
-        {% endfor %}
     </div>
-    </div>
-</div>
 </div>
 {% endblock %}

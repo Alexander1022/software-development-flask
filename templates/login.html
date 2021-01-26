@@ -1,24 +1,53 @@
 {% extends 'main.html' %}
 
+{% block js %}
+<script>
+  function login() {
+    console.log('test');
+    var username = document.getElementById('username').value;
+    var password = document.getElementById('password').value;
+
+    var request = new XMLHttpRequest();
+    request.open("POST", "/login", true);
+    request.onload = function() {
+      var token = JSON.parse(request.responseText).token;
+      if (token != null) {
+        document.cookie = 'token=' + token + ';';
+        document.location = '/';
+      } else {
+        alert('Could not login');
+      }
+
+    }
+    request.send(JSON.stringify(
+      {
+        username: username,
+        password: password
+      }
+    ));
+  }
+</script>
+{% endblock %}
+
 {% block body %}
 <div class="position-static">
   <div class="position-absolute top-50 start-50 translate-middle">
-    <div class="shadow-lg p-3 mb-5 bg-white rounded">
-<form>
-    <div class="form-outline mb-4">
-      <input type="email" id="form3Example3" class="form-control" />
-      <label class="form-label" for="form3Example3">Имейл</label>
-    </div>
+    <h1 class="display-1 text-center">Влизане</h1>
+    <div class="shadow-lg p-5 mb-5 bg-white rounded-3">
+      <form method="POST" >
+        <div class="form-outline mb-4">
+          <input id="username" type="text" name="username"/><br/>
+          <label class="form-label" for="form3Example3">Никнейм</label>
+        </div>
     
-    <div class="form-outline mb-4">
-        <input type="password" id="form3Example4" class="form-control" />
-        <label class="form-label" for="form3Example4">Парола</label>
-    </div>
+        <div class="form-outline mb-4">
+          <input id="password" type="password" name="password"/><br/>
+          <label class="form-label" for="form3Example4">Парола</label>
+        </div>
   
-    <button type="submit" class="btn btn-primary btn-block mb-4">Влизане</button>
-</form>
+    <button type="button" class="btn btn-success" onclick="login()">Влизане</button>
+      </form>
     </div>
 </div>
 </div>
-
 {% endblock %}

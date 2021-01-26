@@ -4,21 +4,27 @@
         
         <ul class="nav justify-content-center">
             <li class="nav-item">
-              <a class="nav-link" href="/posts">Постове</a>
+              <a class="nav-link text-success" href="/posts">Постове</a>
             </li>
 
             <li class="nav-item">
-              <a class="nav-link" href="/users">Потребители</a>
+              <a class="nav-link text-success" href="/users">Потребители</a>
             </li>
         </ul>
 
         <ul class="nav justify-content-end">
+          {% if session.logged_in %}
             <li class="nav-item">
-              <a class="nav-link" href="/register">Регистрация</a>
+              <a class="nav-link text-success" href="/register">Регистрация</a>
+            </li>
+          {% else %}
+            <li class="nav-item">
+              <a class="nav-link text-success" href="/register">Регистрация</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/login">Влизане</a>
+              <a class="nav-link text-success" href="/login">Влизане</a>
             </li>
+          {% endif %}
         </ul>
     </div>
   </nav>

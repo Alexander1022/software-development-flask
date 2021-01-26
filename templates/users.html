@@ -1,28 +1,21 @@
 {% extends 'main.html' %}
 
 {% block body %}
-
-<div class="card-group">
-    {% for us in users %}
-        {% if us.sex == 'f' %}
-            <div class="card text-white bg-danger mb-3">
-                <img src="/static/user.svg" class="card-img-top" width="100" height="100">
-                <div class="card-body">
-                    <h2 class="card-title">{{us.name}}</h5>
-                    <p class="card-text">създаден на {{us.created_profile}}</p>
+<div class="position-static" style="padding: 50px;">
+    <div class="mx-auto">
+        <h1 class="display-1 text-center">Потребители</h1>
+        <br>
+        <div class="card-group">
+            {% for us in users %}
+                <div class="card text-black" style="padding: 50px auto; margin: 25px auto; margin-bottom: 10px;">
+                    <img src="/static/user.svg" class="card-img-top" width="100" height="100">
+                    <div class="card-body" style="margin: 20px auto; margin: 100px auto;">
+                        <h2 class="card-title">{{us.name}}</h5>
+                        <p class="card-text">създаден на {{us.created_profile}}</p>
+                    </div>
                 </div>
-            </div>
-        
-        {% else %}
-            <div class="card text-white bg-primary mb-3">
-                <img src="/static/user.svg" class="card-img-top" width="100" height="100">
-                <div class="card-body">
-                    <h2 class="card-title">{{us.name}}</h5>
-                    <p class="card-text">създаден на {{us.created_profile}}</p>
-                </div>
-            </div>
-            {% endif %}
-    {% endfor %}
-  </div>
-
-  {% endblock %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

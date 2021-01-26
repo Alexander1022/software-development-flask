@@ -3,37 +3,21 @@
 {% block body %}
 <div class="position-static">
   <div class="position-absolute top-50 start-50 translate-middle">
-    <div class="shadow-lg p-3 mb-5 bg-white rounded">
-<form>
-    <div class="row mb-4">
-      <div class="col">
-        <div class="form-outline">
-          <input type="text" id="form3Example1" class="form-control" />
-          <label class="form-label" for="form3Example1">Първо име</label>
-        </div>
+    <h1 class="display-1 text-center">Регистрация</h1>
+    <div class="shadow-lg p-5 mb-5 bg-white rounded-3">
+      <form method="POST" url="/register">
+      <div class="form-outline mb-4">
+        <input type="text" name="username"/><br/>
+        <label class="form-label" for="form3Example3">Никнейм</label>        
       </div>
-      <div class="col">
-        <div class="form-outline">
-          <input type="text" id="form3Example2" class="form-control" />
-          <label class="form-label" for="form3Example2">Фамилия</label>
-        </div>
+      <div class="form-outline mb-4">
+        <input type="password" name="password"/><br/>
+        <label class="form-label" for="form3Example4">Парола</label>
       </div>
+      <button type="submit" class="btn btn-success" >Регистрация</button>
+    </form>
     </div>
-
-    <div class="form-outline mb-4">
-      <input type="email" id="form3Example3" class="form-control" />
-      <label class="form-label" for="form3Example3">Имейл</label>
-    </div>
-  
-    <div class="form-outline mb-4">
-      <input type="password" id="form3Example4" class="form-control" />
-      <label class="form-label" for="form3Example4">Парола</label>
-    </div>
-  
-    <button type="submit" class="btn btn-primary btn-block mb-4">Регистрация</button>
-  </form>
-</div>
-</div>
+  </div>
 </div>
 
 {% endblock %}
