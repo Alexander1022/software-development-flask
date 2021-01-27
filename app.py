@@ -2,8 +2,6 @@ from flask import Flask
 from flask import render_template, request, redirect, jsonify, flash, get_flashed_messages
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-
-
 import hashlib
 import json
 import os.path
@@ -29,10 +27,6 @@ def verify_token(token):
     except BadSignature:
         return False
     return True
-
-
-
-
 
 class User(db.Model):
     _id = db.Column(db.Integer, primary_key=True)
@@ -66,8 +60,6 @@ class User(db.Model):
         except SignatureExpired:
             return None
 
-
-
 class Post(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	author = db.Column(db.String(100), nullable=False)
@@ -75,17 +67,10 @@ class Post(db.Model):
 	#author = db.relationship('User', foreign_keys='User.id')
 	timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
-
-
-
-
 db.create_all()
-
-
 
 @app.route('/')
 def index():
-    flash("Hello")
     return render_template('mainpage.html')
 
 @app.route('/posts')
@@ -105,17 +90,19 @@ def login():
         data = json.loads(request.data.decode('ascii'))
         username = data['username']
         password = data['password']
-
+        
         user = User.query.filter_by(username=username).first()
+
         if not user or not user.verify_password(password):#hash_password(password)?
             return jsonify({'token': None})
+
         token = user.generate_token()
         return jsonify({'token': token.decode('ascii')})
-
+        return redirect('/')
+        flash('You are now logged in', 'success')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    flash('Hello!')
     if request.method == 'GET':
         return render_template('register.html')
 
@@ -124,22 +111,18 @@ def register():
         password = request.form['password']
 
         if User.query.filter_by(username=username).first():
-			flash('Already taken username')
+            flash('Already taken username')
         try:
             user = User(username=username, password=password)
             db.session.add(user)
             db.session.commit()
-            return render_template('register.html')            
-            #return redirect('/')
+            #return render_template('register.html')            
+            flash('You are now registered and can log in', 'success')
+            return redirect('login')
 
 
         except Exception as error: 
-            flash('Error : {}'.format(error))
             return redirect(request.url)
-
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)
