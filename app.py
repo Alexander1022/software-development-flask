@@ -137,7 +137,7 @@ def login():
         token = user.generate_token()
         #return jsonify({'token': token.decode('ascii')})
         return redirect('/')
-        flash('Успешно влезнахте!', 'success')
+        flash('Login was successful!', 'success')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -149,12 +149,12 @@ def register():
         password = request.form['password']
 
         if User.query.filter_by(username=username).first():
-            flash('Ниикнеймът е зает :( Опитайте с друг.')
+            flash('Nickname is already used')
         try:
             user = User(username=username, password=password)
             db.session.add(user)
             db.session.commit()            
-            flash('Вие се регистрирахте успешно!')
+            flash('The registration was successful')
             return redirect('login')
 
         except Exception as error: 
