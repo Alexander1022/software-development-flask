@@ -82,9 +82,10 @@ def index():
 
 @app.route('/posts', methods=['GET', 'POST'])
 def posts():
-    if request.method == 'GET':	
-        posts = Post.query.all()
-        return render_template('posts.html', posts=posts)
+   # if request.method == 'GET':	
+    posts = Post.query.all()
+    return render_template('posts.html', posts=posts)
+"""
     else:
         token = request.cookies.get('token')
         if not verify_token(token):
@@ -104,7 +105,7 @@ def posts():
 
         except Exception as e:
             flash('Error : {}'.format(e))
-            return redirect(request.url)
+            return redirect(request.url)"""
 
 
 @app.route('/users')
@@ -112,9 +113,30 @@ def users():
     user = User.query.all()
     return render_template('users.html', users=user)
 
-@app.route('/add')
+@app.route('/add', methods=['GET', 'POST'])
 def add_post():
-    return  render_template('add.html')
+    if request.method == 'GET':	
+        return render_template('posts.html')
+    else:
+        token = request.cookies.get('token')
+        if not verify_token(token):
+            user = User.query.first()
+
+        else:
+            user = User.find_by_token(token)
+
+        content = request.form['content']
+        try:
+            post = Post(author=user.username, content=content)
+
+            db.session.add(post)
+            db.session.commit()
+            return render_template('add.html')
+
+        except Exception as e:
+            flash('Error : {}'.format(e))
+            return redirect(request.url)
+
 
 
 
