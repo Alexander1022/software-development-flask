@@ -88,6 +88,11 @@ def posts():
 def users():
     return render_template('users.html')
 
+@app.route('/add')
+def add_post():
+    return  render_template('add.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()

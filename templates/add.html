@@ -1,0 +1,12 @@
+{% extends 'main.html' %}
+
+{% block body %}
+<h1 class="display-1 text-center">Добави пост</h1>
+    <form method="POST" url="/posts">
+        <label name="content">Съдържание:</label>
+        <div class="form-group">
+            <textarea type="text" name="content" class="form-control rounded-0" id="exampleFormControlTextarea1" rows="3"></textarea>
+        </div>
+        <button class="btn btn-primary" type= "submit">Пост</buttton>
+      </form>
+{% endblock %}
