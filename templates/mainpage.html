@@ -1,6 +1,24 @@
 {% extends 'main.html' %}
 
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+
+    
+
 {% block body %}
+
+       
+
+
 <div class="position-static">
     <div class="position-absolute top-50 start-50 translate-middle">
 
@@ -9,6 +27,9 @@
         <p class="blockquote text-justify text-center">
             Dust for the books and stars for the imagination. Join us now.
         </p>
+	{% if user %}
+				Hi, {{user.name}}!
+	{% endif %}
 
         <img src="/static/read-book.png" class="rounded mx-auto d-block" width="75" height="64">
         <br>
