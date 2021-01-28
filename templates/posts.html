@@ -5,12 +5,24 @@
     <div class="mx-auto">
         <h1 class="display-1 text-center">Постове</h1>
         <br>
+
+<div class="form-group">
+
+
+
+
+
+
+	
+</div>
+
+
         <div class="card center" style="margin: 0 auto; float: none; margin-bottom: 10px; border: 2px solid black;">
-            {% for user_post in user_posts %}
+            {% for user_post in posts %}
                 <div class="card-body" style="margin:20px;">
-                    <h5 class="card-title">{{user_post.id}} - {{user_post.title}}</h5>
-                    <p class="card-text">От {{user_post.author}} на {{user_post.create_date}}</p>
-                    <a href="#" class="btn btn btn-success">Виж статията</a>
+                    <h5 class="card-title">{{user_post.author}}</h5>
+                    <p class="card-text">{{user_post.content}}</p>
+                    
                 </div>
                 <hr  style="border: 2px solid #198754;">
             {% endfor %}
