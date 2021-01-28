@@ -3,6 +3,11 @@
       <a class="navbar-brand" href="/">Stardust</a>
         
         <ul class="nav justify-content-center">
+            {% if session.logged_in %}
+            <li class="nav-item">
+              <a class="nav-link text-success" href="/add">Добави пост</a>
+            </li>
+            {% endif %}
             <li class="nav-item">
               <a class="nav-link text-success" href="/posts">Постове</a>
             </li>

@@ -7,6 +7,7 @@ import hashlib, json, os.path
 from flask_wtf import FlaskForm 
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
+
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 
 app = Flask(__name__)
@@ -30,9 +31,9 @@ def verify_token(token):
     return True
 
 class User(db.Model):
-    _id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(20), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(15), unique=True)
+    password = db.Column(db.String(30))
 
     def __init__(self, **kwargs):
         if 'password' in kwargs:
@@ -66,7 +67,6 @@ class LoginForm(FlaskForm):
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
     remember = BooleanField('remember me')
 
-
 class Post(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	author = db.Column(db.String(100), nullable=False)
@@ -82,31 +82,8 @@ def index():
 
 @app.route('/posts', methods=['GET', 'POST'])
 def posts():
-   # if request.method == 'GET':	
     posts = Post.query.all()
     return render_template('posts.html', posts=posts)
-"""
-    else:
-        token = request.cookies.get('token')
-        if not verify_token(token):
-            user = User.query.first()
-
-        else:
-            user = User.find_by_token(token)
-
-        content = request.form['content']
-        try:
-            post = Post(author=user.username, content=content)
-
-            db.session.add(post)
-            db.session.commit()
-            posts = Post.query.all()
-            return render_template('posts.html', posts=posts)
-
-        except Exception as e:
-            flash('Error : {}'.format(e))
-            return redirect(request.url)"""
-
 
 @app.route('/users')
 def users():
@@ -116,7 +93,8 @@ def users():
 @app.route('/add', methods=['GET', 'POST'])
 def add_post():
     if request.method == 'GET':	
-        return render_template('posts.html')
+        return render_template('add.html')
+
     else:
         token = request.cookies.get('token')
         if not verify_token(token):
@@ -126,6 +104,7 @@ def add_post():
             user = User.find_by_token(token)
 
         content = request.form['content']
+
         try:
             post = Post(author=user.username, content=content)
 
@@ -136,8 +115,6 @@ def add_post():
         except Exception as e:
             flash('Error : {}'.format(e))
             return redirect(request.url)
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -183,10 +160,17 @@ def register():
         except Exception as error: 
             return redirect(request.url)
 
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
 
-
-
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
