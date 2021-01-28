@@ -7,8 +7,8 @@ import hashlib, json, os.path
 from flask_wtf import FlaskForm 
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
-
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
+from functools import wraps
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -31,9 +31,9 @@ def verify_token(token):
     return True
 
 class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(15), unique=True)
-    password = db.Column(db.String(30))
+    _id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), unique=True, nullable=False)
+    password = db.Column(db.String(20), nullable=False)
 
     def __init__(self, **kwargs):
         if 'password' in kwargs:
@@ -67,6 +67,7 @@ class LoginForm(FlaskForm):
     password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
     remember = BooleanField('remember me')
 
+
 class Post(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	author = db.Column(db.String(100), nullable=False)
@@ -82,8 +83,31 @@ def index():
 
 @app.route('/posts', methods=['GET', 'POST'])
 def posts():
+   # if request.method == 'GET':	
     posts = Post.query.all()
     return render_template('posts.html', posts=posts)
+"""
+    else:
+        token = request.cookies.get('token')
+        if not verify_token(token):
+            user = User.query.first()
+
+        else:
+            user = User.find_by_token(token)
+
+        content = request.form['content']
+        try:
+            post = Post(author=user.username, content=content)
+
+            db.session.add(post)
+            db.session.commit()
+            posts = Post.query.all()
+            return render_template('posts.html', posts=posts)
+
+        except Exception as e:
+            flash('Error : {}'.format(e))
+            return redirect(request.url)"""
+
 
 @app.route('/users')
 def users():
@@ -94,9 +118,9 @@ def users():
 def add_post():
     if request.method == 'GET':	
         return render_template('add.html')
-
     else:
         token = request.cookies.get('token')
+        print(token)
         if not verify_token(token):
             user = User.query.first()
 
@@ -104,7 +128,6 @@ def add_post():
             user = User.find_by_token(token)
 
         content = request.form['content']
-
         try:
             post = Post(author=user.username, content=content)
 
@@ -117,30 +140,51 @@ def add_post():
             return redirect(request.url)
 
 
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = LoginForm()
-    
+    #form = LoginForm()
+    token = request.cookies.get('token')
+
     if request.method == 'GET':
         return render_template('login.html')
 
     else:
+        print("Hi")
         data = json.loads(request.data.decode('ascii'))
         username = data['username']
         password = data['password']
-        
+        print(username)
         user = User.query.filter_by(username=username).first()
 
         if not user or not user.verify_password(password): #hash_password(password)?
             return jsonify({'token': None})
 
         token = user.generate_token()
-        #return jsonify({'token': token.decode('ascii')})
-        return redirect('/')
-        flash('Login was successful!', 'success')
+        print(token)
+        return jsonify({'token': token.decode('ascii')})
+        #return redirect('/')
+        flash('Successfully logged in!', 'success')
+
+def stop_logged_users(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        token = request.cookies.get('token')
+        if token and verify_token(token):
+            flash('You\'re already logged in.')
+            return redirect('/')
+        return func(*args, **kwargs)
+    return wrapper
+
+
+
+
 
 @app.route('/register', methods=['GET', 'POST'])
+@stop_logged_users
 def register():
+
     if request.method == 'GET':
         return render_template('register.html')
 
@@ -149,16 +193,17 @@ def register():
         password = request.form['password']
 
         if User.query.filter_by(username=username).first():
-            flash('Nickname is already used')
+            flash('The username is taken :( Choose other.')
         try:
             user = User(username=username, password=password)
             db.session.add(user)
             db.session.commit()            
-            flash('The registration was successful')
+            flash('You registered successfully!')
             return redirect('login')
 
         except Exception as error: 
             return redirect(request.url)
+
 
 @app.route('/logout')
 @login_required
@@ -170,7 +215,9 @@ def logout():
 def page_not_found(e):
     return render_template('404.html')
 
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
 
