@@ -1,41 +1,41 @@
 {% extends 'main.html' %}
+{% block body %}
 
-{% block js %}
 <script>
-  function login() {
-    console.log('test');
+  function login() 
+  {
+    console.log('Влизане');
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
     var request = new XMLHttpRequest();
     request.open("POST", "/login", true);
-    request.onload = function() {
+    request.setRequestHeader("Accept", "application/json");
+    request.onload = function() 
+    {
       var token = JSON.parse(request.responseText).token;
-      if (token != null) {
+      if (token != null) 
+      {
         document.cookie = 'token=' + token + ';';
         document.location = '/';
-      } else {
+      }
+
+      else 
+      {
         alert('Could not login');
       }
 
     }
-    request.send(JSON.stringify(
-      {
-        username: username,
-        password: password
-      }
-    ));
+    request.send(JSON.stringify({username: username, password: password}));
   }
 </script>
-{% endblock %}
-
-{% block body %}
 
 <div class="position-static">
   <div class="position-absolute top-50 start-50 translate-middle">
     <h1 class="display-1 text-center">Влизане</h1>
     <div class="shadow-lg p-5 mb-5 bg-white rounded-3">
       <form method="POST" >
+        
         <div class="form-outline mb-4">
           <input id="username" type="text" name="username"/><br/>
           <label class="form-label" for="form3Example3">Никнейм</label>
@@ -46,9 +46,11 @@
           <label class="form-label" for="form3Example4">Парола</label>
         </div>
   
-    <button type="button" class="btn btn-success" onclick="login()">Влизане</button>
+        <button type="button" class="btn btn-success" onclick="login()">Влизане</button>
+
       </form>
     </div>
+  </div>
 </div>
-</div>
+
 {% endblock %}

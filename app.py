@@ -1,10 +1,12 @@
 from flask import Flask
-from flask import render_template, request, redirect, jsonify, flash, get_flashed_messages
+from flask import render_template, request, redirect, jsonify, flash, get_flashed_messages, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
-import hashlib
-import json
-import os.path
+import hashlib, json, os.path
+from flask_wtf import FlaskForm 
+from wtforms import StringField, PasswordField, BooleanField
+from wtforms.validators import InputRequired, Email, Length
 
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 
@@ -29,9 +31,9 @@ def verify_token(token):
     return True
 
 class User(db.Model):
-    _id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    password = db.Column(db.String(20), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(15), unique=True)
+    password = db.Column(db.String(30))
 
     def __init__(self, **kwargs):
         if 'password' in kwargs:
@@ -60,6 +62,11 @@ class User(db.Model):
         except SignatureExpired:
             return None
 
+class LoginForm(FlaskForm):
+    username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8, max=80)])
+    remember = BooleanField('remember me')
+
 class Post(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	author = db.Column(db.String(100), nullable=False)
@@ -83,9 +90,11 @@ def users():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    form = LoginForm()
+    
     if request.method == 'GET':
-        #res = Post.query.all()
         return render_template('login.html')
+
     else:
         data = json.loads(request.data.decode('ascii'))
         username = data['username']
@@ -93,13 +102,13 @@ def login():
         
         user = User.query.filter_by(username=username).first()
 
-        if not user or not user.verify_password(password):#hash_password(password)?
+        if not user or not user.verify_password(password): #hash_password(password)?
             return jsonify({'token': None})
 
         token = user.generate_token()
-        return jsonify({'token': token.decode('ascii')})
+        #return jsonify({'token': token.decode('ascii')})
         return redirect('/')
-        flash('You are now logged in', 'success')
+        flash('Успешно влезнахте!', 'success')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -111,18 +120,26 @@ def register():
         password = request.form['password']
 
         if User.query.filter_by(username=username).first():
-            flash('Already taken username')
+            flash('Ниикнеймът е зает :( Опитайте с друг.')
         try:
             user = User(username=username, password=password)
             db.session.add(user)
-            db.session.commit()
-            #return render_template('register.html')            
-            flash('You are now registered and can log in', 'success')
+            db.session.commit()            
+            flash('Вие се регистрирахте успешно!')
             return redirect('login')
-
 
         except Exception as error: 
             return redirect(request.url)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect('/')
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
